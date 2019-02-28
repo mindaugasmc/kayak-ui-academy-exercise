@@ -1,3 +1,11 @@
+## Quick Overview
+
+```sh
+npm install
+npm start
+```
+
+
 # Kayak UI Academy Užduotis.
 
 Sukurkite paieškos _autocomplete_ komponentą, naudodami `ReactJS` biblioteką, kurio pagalba vartotojas galės pasirinkti kino filmą iš įvestos frazės atitikmenų. Paieškos komponentas turi bendrauti su filmų informacijos API.
