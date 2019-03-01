@@ -16,33 +16,15 @@ class Autocomplete extends Component {
     };
   }
 
-  fetchMovies = () => {
-    const { search } = this.state;
-    fetch(
-      `https://api.themoviedb.org/3/search/movie?` +
-        `api_key=cab2afe8b43cf5386e374c47aeef4fca&language=en-US&query=` +
-        `${search}&page=1&include_adult=false`
-    )
-      .then(res => res.json())
-      .then(res => this.addMovies(res.results));
-  };
-
-  addMovies = movies => {
-    this.setState({
-      movies: movies.slice(0, 8),
-      error: movies.length === 0 ? 'No results found' : ''
-    });
-  };
-
-  handleChange = ({ target: { value } }) => {
-    this.setState(
-      {
-        search: value,
-        active: value.length > 0,
-        movies: [],
-        error: value.length < 3 ? 'Search phrase must be at least 3 characters long' : ''
-      },
-      () => value.length > 2 && this.fetchMovies()
+  renderMovie = ({ id, title, vote_average, release_date }) => {
+    return (
+      <div className={styles.card} key={id} onClick={() => this.setMovie(title)}>
+        <div className={styles.mainText}>{title}</div>
+        <div className={styles.altText}>
+          {`${vote_average % 1 !== 0 ? vote_average : `${vote_average}.0`} Rating, `}
+          {release_date.slice(0, 4)}
+        </div>
+      </div>
     );
   };
 
@@ -55,16 +37,34 @@ class Autocomplete extends Component {
     });
   };
 
-  renderMovie = ({ id, title, vote_average, release_date }) => {
-    return (
-      <div className={styles.card} key={id} onClick={() => this.setMovie(title)}>
-        <div className={styles.mainText}>{title}</div>
-        <div className={styles.altText}>
-          {`${vote_average % 1 !== 0 ? vote_average : `${vote_average}.0`} Rating, `}
-          {release_date.slice(0, 4)}
-        </div>
-      </div>
+  handleChange = ({ target: { value } }) => {
+    this.setState(
+      {
+        search: value,
+        active: value.length > 0,
+        movies: [],
+        error: value.length < 3 ? 'Search terms must be at least 3 characters in length' : ''
+      },
+      () => value.length > 2 && this.loadMovies()
     );
+  };
+
+  addMovies = movies => {
+    this.setState({
+      movies: movies.slice(0, 8),
+      error: movies.length === 0 ? 'Sorry, we could not find any results' : ''
+    });
+  };
+
+  loadMovies = () => {
+    const { search } = this.state;
+    fetch(
+      `https://api.themoviedb.org/3/search/movie?` +
+        `api_key=cab2afe8b43cf5386e374c47aeef4fca&language=en-US&query=` +
+        `${search}&page=1&include_adult=false`
+    )
+      .then(res => res.json())
+      .then(res => this.addMovies(res.results));
   };
 
   render() {
